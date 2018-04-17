@@ -1,0 +1,152 @@
+###
+# app configuration
+# http://docs.pylonsproject.org/projects/pyramid/en/latest/narr/environment.html
+###
+
+[schema]
+sensor_schema = ecoReleve_Sensor.dbo
+
+[app:main]
+use = egg:ecoreleve_server
+
+pyramid.reload_templates = true
+pyramid.debug_authorization = true
+pyramid.debug_notfound = false
+pyramid.debug_routematch = false
+pyramid.default_locale_name = en
+pyramid.includes =
+    pyramid_debugtoolbar
+    pyramid_tm
+
+#
+
+; logging.config = %(here)s/development.ini
+
+cn.dialect = mssql+pyodbc:///?odbc_connect=
+sqlalchemy.default.url = DRIVER={SQL Server};Server=yourServerSQL;Database=dbname;UID=user;PWD=pass;
+data_schema = dbName.schema
+sensor_schema = anotherDB.dbo
+sqlalchemy.Export.url = DRIVER={SQL Server};Server=yourServer;Database=dbname_export;UID=user;PWD=pass;
+
+; sqlalchemy.Export.url = postgresql+psycopg2://user:pass@127.0.0.1/dbname
+; cn.dialect = postgres
+; sqlalchemy.default.url = postgresql+psycopg2://erd_user:ns123456@localhost/ecoreleve
+; data_schema = ecoreleve.public
+; sensor_schema = ecoreleve_sensor.public
+
+
+sqlalchemy.default.implicit_returning = True
+; sqlalchemy.default.pool_reset_on_return = commit
+sqlalchemy.default.pool_size = 30
+sqlalchemy.default.pool_timeout = 5
+sqlalchemy.default.max_overflow = 10
+sqlalchemy.default.case_sensitive= False
+
+
+;sqlalchemy.Export.implicit_returning = False
+;sqlalchemy.Export.pool_reset_on_return = commit
+;sqlalchemy.Export.pool_size = 30
+;sqlalchemy.Export.pool_timeout = 5
+;sqlalchemy.Export.max_overflow = 10
+;sqlalchemy.Export.case_sensitive= False
+
+; dbLog.url = postgresql+psycopg2://user:password@127.0.0.1/dbname
+; dbLog.schema =NSLog.public
+
+dbLog.url = DRIVER={SQL Server};Server=yourServer;Database=yourDBLOG;UID=user;PWD=password
+dbLog.schema =NSLog.dbo
+
+loadExportDB = False
+# dialect = mssql
+
+auth.secret = ecoReleve
+
+wsThesaurus.wsUrl = http://127.0.0.1/ThesaurusCore/api/thesaurus
+wsThesaurus.lng = fr
+wsThesaurus.authURL = http://127.0.0.1/portal/security/login
+wsThesaurus.authID = http://127.0.0.1/portal/security/login
+wsThesaurus.authPWD = http://127.0.0.1/portal/security/login
+
+jwtauth.master_secret = test
+camTrap.path = D:\Data\CameraTrap
+mediasFiles.path = D:\Data\CameraTrap
+init_exiftool = False
+
+; ; global settings
+; dogpile_cache.backend = file
+; dogpile_cache.host = 127.0.0.1
+; dogpile_cache.port = 6379
+; dogpile_cache.db = 0
+; dogpile_cache.expiration_time = 7200
+; dogpile_cache.distributed_lock = 1
+
+
+; ; settings for foo
+; dogpile_cache.foo.backend = redis
+; dogpile_cache.foo.arguments.host = 127.0.0.1
+; dogpile_cache.foo.arguments.port = 6379
+; dogpile_cache.foo.arguments.db = 0
+; dogpile_cache.foo.arguments.redis_expiration_time = 7200
+; dogpile_cache.foo.arguments.distributed_lock = 1
+
+# By default, the toolbar only appears for clients from IP addresses
+# '127.0.0.1' and '::1'.
+# debugtoolbar.hosts = 127.0.0.1 ::1
+
+###
+# wsgi server configuration
+###
+
+[server:main]
+use = egg:waitress#main
+; use = egg:pyramid#cherrypy
+host = 127.0.0.1
+port = 6545
+
+
+###
+# logging configuration
+# http://docs.pylonsproject.org/projects/pyramid/en/latest/narr/logging.html
+###
+
+[loggers]
+keys = root, ecoreleve_server, sqlalchemy, wsgi
+
+[handlers]
+keys = console
+
+[formatters]
+keys = generic
+
+[logger_root]
+level = INFO
+handlers = console
+
+[logger_ecoreleve_server]
+level = INFO
+handlers =
+qualname = app
+
+[logger_sqlalchemy]
+level = INFO
+handlers =
+qualname = sqlalchemy.engine
+# "level = INFO" logs SQL queries.
+# "level = DEBUG" logs SQL queries and results.
+# "level = WARN" logs neither.  (Recommended for production systems.)
+
+[logger_wsgi]
+level = INFO
+handlers = 
+qualname = wsgi
+propagate = 0
+
+
+[handler_console]
+class = StreamHandler
+args = (sys.stderr,)
+level = WARN
+formatter = generic
+
+[formatter_generic]
+format = %(asctime)s %(levelname)-5.5s [%(name)s][%(threadName)s] %(message)s

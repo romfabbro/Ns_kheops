@@ -1,0 +1,16 @@
+from pyramid.security import (
+    Allow,
+    Authenticated,
+    ALL_PERMISSIONS,
+    Everyone,
+    Deny
+)
+
+context_permissions = {
+    'examples': [
+        (Allow, 'group:admin', ALL_PERMISSIONS),
+        # (Allow, Authenticated, ALL_PERMISSIONS),
+        (Allow, 'group:superUser', ('create', 'update', 'read')),
+        (Allow, 'group:user', ('read'))
+    ]
+}

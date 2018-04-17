@@ -1,0 +1,12 @@
+{
+    "app_title": "kheops_server",
+    "repo_name": "{{cookiecutter.app_title|replace(' ', '')|lower}}",
+    "short_description": "A template project from ecoreleve core",
+    "version": "0.1.0",
+    "db_schema": "my_database.dbo or my_database.public",
+    "cookie_secret_key": "my_secret_pass",
+    "cookie_name": "my_cookie_name",
+    "dialect": "mssql or postgresql",
+    "python_env_name": "my_py_env",
+    "api_root_name": "ecoReleve-Core"
+}
