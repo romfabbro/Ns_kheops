@@ -17,7 +17,6 @@ from {{cookiecutter.repo_name}}.core.base_collection import Query_engine, eval_
 from . import Example
 
 
-@Query_engine(Module_example)
+@Query_engine(Example)
 class ExampleCollection:
     pass
-

@@ -5,8 +5,9 @@ from pyramid.security import (
     Everyone,
     Deny
 )
+from pyramid.view import view_config, view_defaults
 
-from .init_db import Base, BaseExport, dbConfig, get_redis_con
+from .init_db import Base, BaseExport, dbConfig, get_redis_con, ModelFactory
 from .base_model import *
 from .base_view import *
 from .base_resource import *
@@ -43,3 +44,15 @@ class RootCore(Resource):
 
     def retrieve(self):
         return {'next items': self}
+
+
+@view_defaults(context=SecurityRoot)
+class HomeView:
+
+    def __init__(self, request, context):
+        self.request = request
+        self.context = context
+
+    @view_config(request_method='GET', renderer='json', permission='read')
+    def home(self):
+        return 'hello'

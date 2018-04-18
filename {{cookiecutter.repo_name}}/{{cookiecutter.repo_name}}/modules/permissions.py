@@ -2,6 +2,7 @@ from pyramid.security import (
     Allow,
     Authenticated,
     ALL_PERMISSIONS,
+    NO_PERMISSION_REQUIRED,
     Everyone,
     Deny
 )

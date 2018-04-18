@@ -9,4 +9,4 @@ class ExamplesView(RestCollectionView):
 
     @view_config(name='examples_action', request_method='GET', renderer='json')
     def example_tzzez(self):
-        return self.context.exmaple_route()
+        return self.context.example_route()

@@ -10,7 +10,7 @@ from {{cookiecutter.repo_name}}.core.base_resource import DynamicObjectResource,
 
 from .example_collection import ExampleCollection
 from .example_model import Example
-from ..permissions import context_permissions
+from ..permissions import context_permissions, NO_PERMISSION_REQUIRED
 
 
 class ExampleResource(DynamicObjectResource):
@@ -29,6 +29,9 @@ class ExamplesResource(DynamicObjectCollectionResource):
     children = [('{int}', ExampleResource)]
 
     __acl__ = context_permissions['examples']
+
+    def example_route(self):
+        return 'you are in example route'
 
 
 RootCore.children.append(('examples', ExamplesResource))

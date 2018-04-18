@@ -127,7 +127,7 @@ class DynamicValueResource(CustomResource):
 
 class DynamicValuesResource(CustomResource):
     def retrieve(self):
-        from {{cookiecutter.repo_name}}.utils.parseValue import formatThesaurus
+        from kheops_server.utils.parseValue import formatThesaurus
 
         propertiesTable = Base.metadata.tables[self.__parent__.objectDB.TypeClass.PropertiesClass.__tablename__]
         dynamicValuesTable = Base.metadata.tables[self.__parent__.objectDB.DynamicValuesClass.__tablename__]
@@ -297,26 +297,29 @@ class DynamicObjectCollectionResource(CustomResource):
         return (key, newVal)
 
     def collection_traduct_from_thesaurus(self, data):
-        traduced_data = []
-        dataConfigWithThesaurus = list(
-            filter(lambda obj: 'AutocompTreeEditor' == obj.FilterType, self.getConf(self.moduleGridName).ModuleGrids))
-        # listWithThes = list(map(lambda x: x.Name, listWithThes))
+        try:
+            traduced_data = []
+            dataConfigWithThesaurus = list(
+                filter(lambda obj: 'AutocompTreeEditor' == obj.FilterType, self.getConf(self.moduleGridName).ModuleGrids))
+            # listWithThes = list(map(lambda x: x.Name, listWithThes))
 
-        # change thesaural term into laguage user
-        for row in data:
-            row = dict(map(lambda i: self.traduct_from_thesaurus(i, dataConfigWithThesaurus), row.items()))
-            traduced_data.append(row)
-        return traduced_data
+            # change thesaural term into laguage user
+            for row in data:
+                row = dict(map(lambda i: self.traduct_from_thesaurus(i, dataConfigWithThesaurus), row.items()))
+                traduced_data.append(row)
+            return traduced_data
+        except:
+            return data
 
     def formatParams(self, params, paging):
         history = False
         startDate = None
         searchInfo = {}
         searchInfo['criteria'] = []
-
+    
         if not bool(params):
             params = self.request.params.mixed()
-
+        print(params)
         if 'criteria' in params:
             params['criteria'] = json.loads(params['criteria'])
             if params['criteria'] != {}:
@@ -350,28 +353,41 @@ class DynamicObjectCollectionResource(CustomResource):
 
     @timing
     def search(self, paging=True, params={}, noCount=False):
-        params, history, startDate = self.formatParams(params, paging)
-        if params.get('offset', 0) > 0:
-            if not params.get('order_by', []):
-                params['order_by'] = [inspect(self.model).primary_key[0].name+':asc']
+        cols = []
+        try:
+            params, history, startDate = self.formatParams(params, paging)
+            if params.get('offset', 0) > 0:
+                if not params.get('order_by', []):
+                    params['order_by'] = [inspect(self.model).primary_key[0].name+':asc']
+            try:
+                conf_grid = self.getGrid()
+                cols = list(map(lambda x: x['field'], conf_grid))
+            except:
+                cols = []
 
-        conf_grid = self.getGrid()
-        cols = list(map(lambda x: x['field'],conf_grid))
-        from_history = 'all' if history else startDate
-        self.collection = self.getCollection(from_history=from_history)
+            from_history = 'all' if history else startDate
+            self.collection = self.getCollection(from_history=from_history)
+            searchParams = {
+                            'selectable':cols,
+                            'filters':params.get('criteria', []),
+                            'offset':params.get('offset'),
+                            'limit':params.get('per_page'), 
+                            'order_by':params.get('order_by')
+                            }
+            print(searchParams)
+        except:
+            from traceback import print_exc
+            print_exc()
+            self.collection = self.getCollection()
+            searchParams = {
+                            }
 
         if not noCount:
             countResult = self.collection._count(filters=params.get('criteria', []))
             result = [{'total_entries': countResult}]
             dataResult = self.handleCount(countResult,
                                           self.collection.search,
-                                          {
-                                            'selectable':cols,
-                                            'filters':params.get('criteria', []),
-                                            'offset':params.get('offset'),
-                                            'limit':params.get('per_page'), 
-                                            'order_by':params.get('order_by')
-                                          }
+                                          searchParams
                                         )
             if dataResult:
                 dataResult = self.collection_traduct_from_thesaurus(dataResult)
