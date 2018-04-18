@@ -197,8 +197,7 @@ class OrmFactory(object):
 
         def real_decorator(function):
             if not wrappingMethod:
-                setattr(myClass, function.__name__,
-                        types.MethodType(function, myClass))
+                setattr(myClass, function.__name__, function)
             else:
                 setattr(myClass, function.__name__, wrappingMethod(function))
         return real_decorator
