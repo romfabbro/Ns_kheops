@@ -81,6 +81,8 @@ def main(global_config, **settings):
     config.add_renderer('gpx', GPXRenderer)
 
     include_jwt_policy(config)
+    ini_resource_factory()
+
     config.set_root_factory(SecurityRoot)
 
     config.add_subscriber(add_cors_headers_response_callback, NewRequest)

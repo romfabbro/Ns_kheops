@@ -1,6 +1,6 @@
 {
     "app_title": "kheops_server",
-    "repo_name": "{{cookiecutter.app_title|replace(' ', '')|lower}}",
+    "repo_name": "{{cookiecutter.app_title|replace(' ', '_')|lower}}",
     "short_description": "A template project from ecoreleve core",
     "version": "0.1.0",
     "db_schema": "my_database.dbo or my_database.public",
