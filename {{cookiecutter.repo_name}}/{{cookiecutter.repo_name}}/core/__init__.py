@@ -7,13 +7,22 @@ from pyramid.security import (
 )
 from pyramid.view import view_config, view_defaults
 
-from .init_db import Base, BaseExport, dbConfig, get_redis_con, ModelFactory
+from .init_db import Base, BaseExport, dbConfig, get_redis_con, ModelFactory, storageConf
 from .base_model import *
 from .base_view import *
 from .base_resource import *
 from .configuration_model import *
+from ..controllers.ApiController import ApiFactory
 
 api_root = '{{cookiecutter.api_root_name}}'
+
+
+def ini_resource_factory():
+    global ResourceFactory
+    try:
+        ResourceFactory = ApiFactory(ModelFactory, storageConf['api_objects'])
+    except:
+        pass
 
 
 class SecurityRoot(Resource):
